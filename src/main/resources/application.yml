@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: order-app
+  datasource:
+    url: jdbc:h2:mem:order_app
+    driver-class-name: org.h2.Driver
+    username: username
+    password: password
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+#      ddl-auto: update
+#    show-sql: true
+
+server:
+  port: 8085
+  servlet:
+    context-path: /order-app
