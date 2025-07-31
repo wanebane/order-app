@@ -44,7 +44,7 @@ public class InventoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GeneralResponse> update(@PathVariable Long id, @RequestBody InventoryUpdateRequest request){
+    public ResponseEntity<GeneralResponse> update(@PathVariable Long id, @Valid @RequestBody InventoryUpdateRequest request){
         return ResponseEntity.ok(mapper
                 .toGeneralResponse(String.format(constant.MSG_EDIT, constant.LAB_INVENTORY, id),
                         inventoryService.updateInventory(id, request)));

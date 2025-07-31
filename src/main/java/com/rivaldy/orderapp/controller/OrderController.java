@@ -36,13 +36,13 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<GeneralResponse> add(@RequestBody OrderAddRequest request){
+    public ResponseEntity<GeneralResponse> add(@Valid @RequestBody OrderAddRequest request){
         return new ResponseEntity<>(mapper.toGeneralResponse(String.format(constant.MSG_ADD, constant.LAB_ORDER),
                 orderService.addOrder(request)), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GeneralResponse> update(@PathVariable Long id, @RequestBody OrderUpdateRequest request){
+    public ResponseEntity<GeneralResponse> update(@PathVariable Long id, @Valid @RequestBody OrderUpdateRequest request){
         return ResponseEntity.ok(mapper
                 .toGeneralResponse(String.format(constant.MSG_EDIT, constant.LAB_ORDER, id),
                         orderService.updateOrder(id, request)));
@@ -52,6 +52,6 @@ public class OrderController {
     public ResponseEntity<GeneralResponse> delete(@PathVariable Long id){
         orderService.deleteOrder(id);
         return ResponseEntity.ok(mapper
-                .toGeneralResponse(String.format(constant.MSG_DEL, constant.LAB_ORDER)));
+                .toGeneralResponse(String.format(constant.MSG_DEL, constant.LAB_ORDER, id)));
     }
 }

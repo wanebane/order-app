@@ -17,6 +17,5 @@ public class InventoryAddRequest {
 
     @NotNull(message = "Type cannot be null")
     @ValidInventoryType
-//    @Pattern(regexp = "^[T|W]$", message = "Type must be either 'T' or 'W'")
     private String type;
 }
