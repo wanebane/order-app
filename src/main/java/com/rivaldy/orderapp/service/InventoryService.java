@@ -72,7 +72,7 @@ public class InventoryService {
 
         Inventory inventory = Inventory.builder()
                 .qty(request.getQty())
-                .type(InventoryType.fromType(request.getType()))
+                .type(InventoryType.TOP_UP)
                 .item(item)
                 .build();
 
@@ -85,8 +85,8 @@ public class InventoryService {
         Item item = itemService.findItem(request.getItemId());
         Inventory inventory = findInventory(id);
         inventory.setItem(item);
-        inventory.setQty(request.getQty());
         inventory.setType(InventoryType.fromType(request.getType()));
+        proceedStock(inventory, request.getQty());
         inventoryRepository.save(inventory);
         return toResponse(inventory);
     }
@@ -98,26 +98,21 @@ public class InventoryService {
         inventoryRepository.deleteById(id);
     }
 
-    public void reduceStock(Long itemId, Integer reqStock){
-        proceedInventoryStock(itemId, reqStock, false);
+    public void proceedStock(Inventory inventory, int reqQty){
+        int currentQty = inventory.getQty();
+        boolean isWithdrawal = InventoryType.WITHDRAWAL.equals(inventory.getType());
+        boolean isStockIsNotEnough = currentQty == 0 || currentQty < reqQty;
+        if (isWithdrawal && isStockIsNotEnough){
+            throw new InsufficientException(String.format(constant.ERR_INS_STOCK, inventory.getItem().getId(), currentQty));
+        }
+        int lastQty = isWithdrawal ? currentQty - reqQty : currentQty + reqQty;
+        inventory.setQty(lastQty);
     }
 
-    public void reStock(Long itemId, Integer reqStock){
-        proceedInventoryStock(itemId, reqStock, true);
-    }
-
-    public void proceedInventoryStock(Long itemId, Integer reqStock, boolean isReStock){
+    public void reduceStock(Long itemId, Integer reqQty){
         Inventory inventory = inventoryRepository.findByItem(itemId)
                 .orElseThrow(() -> new DataNotFoundException(String.format(constant.ERR_ITEM_NOT_FOUND, constant.LAB_INVENTORY, itemId)));
 
-        int currentStock = inventory.getQty();
-        boolean isStockIsEnough = currentStock == 0 || currentStock < reqStock;
-        if (!isReStock && isStockIsEnough){
-            throw new InsufficientException(String.format(constant.ERR_INS_STOCK, itemId, currentStock));
-        }
-        int lastQty = isReStock ? (currentStock + reqStock) : (currentStock - reqStock);
-        inventory.setQty(lastQty);
-
-        inventoryRepository.save(inventory);
+        proceedStock(inventory, reqQty);
     }
 }

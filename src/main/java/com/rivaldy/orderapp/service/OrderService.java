@@ -18,7 +18,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -91,9 +90,6 @@ public class OrderService {
     public OrderResponse updateOrder(Long id, OrderUpdateRequest request){
         Order order = findOrder(id);
         Item item = itemService.findItem(request.getItemId());
-        if (!Objects.equals(request.getItemId(), order.getItem().getId())){
-            inventoryService.reStock(order.getItem().getId(), order.getQty());
-        }
         inventoryService.reduceStock(request.getItemId(), request.getQty());
         order.setItem(item);
         order.setQty(request.getQty());

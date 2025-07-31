@@ -82,7 +82,6 @@ class InventoryControllerTest {
         InventoryAddRequest request = new InventoryAddRequest();
         request.setItemId(1L);
         request.setQty(10);
-        request.setType("IN");
 
         when(inventoryService.addInventory(request)).thenReturn(inventoryResponse);
 

@@ -1,6 +1,5 @@
 package com.rivaldy.orderapp.model.request;
 
-import com.rivaldy.orderapp.validator.annotation.ValidInventoryType;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -14,8 +13,4 @@ public class InventoryAddRequest {
     @NotNull(message = "qty cannot be empty")
     @Min(value = 1, message = "qty must be at least 1")
     private Integer qty;
-
-    @NotNull(message = "Type cannot be null")
-    @ValidInventoryType
-    private String type;
 }
